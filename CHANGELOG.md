@@ -1,6 +1,14 @@
-# oagentkit-toolname CHANGELOG
+# toolname CHANGELOG
 
 > 本文件由 `matrix-tools/scripts/gen_changelogs.py` 从 git 历史生成，按 tag 切段、取每段内的 conventional commit 渲染。
+
+## [v0.2.1] — 2026-11-23
+
+- CI：薄调用层加 tag 触发器——打 tag 会跑共享门禁 5 个档位
+
+共享 workflow 是 workflow_call（加不了触发器），触发器只能加在各仓薄调用层——与矩阵其余 13 个模块仓同款。
+补上后 tag 事件会多跑一档 matrix-registration：打 tag 的那个仓必须在矩阵登记面内（modules ∪ infraRepos）；toolname 已在第 14 模块登记面内。
+
 
 ## [v0.2.0] — 2026-11-23
 
