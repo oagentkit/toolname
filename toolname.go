@@ -2,18 +2,22 @@
 //
 // 生命周期: Stable（v0.33.0 定级）——只允许 additive 变更（新增导出符号 /
 // 新增方法且给零值默认实现 / 新增错误值）；改签名、改语义、改默认值、
-// 删导出符号都算 breaking，判定规则与变更流程见 docs/api-compat.md，
-// 逐包理由见 api-lifecycle.yaml。
+// 删导出符号都算 breaking。
+//
+// 本包 v0.1.0 起独立成仓（github.com/oagentkit/toolname）：原在 goagent-kernel
+// 内，v0.58.0 上移 oekit/pkg，v0.59.0 自 oekit/pkg 归位到本仓。kernel 侧的
+// 兼容变更判定规则（docs/api-compat.md）与逐包定级表（api-lifecycle.yaml）
+// 随包迁出后已不含本包——本仓的 breaking 判定以上述口径为准。
 //
 // # 它为什么是一个独立包，而不是两处各写一份
 //
 // 工具名要在两处被规整成同一个字符串：
 //
-//   - 生产侧（tooldisclose）：从工具目录派生给模型看的调用形态，
-//     形态里的函数名必须是**净化后**的名字——因为程序里真正挂上去的
-//     就是净化后的那个（ptc 把绑定挂在 host.<净化名> 上）。
-//   - 消费侧（ptc）：把绑定挂到 host 对象上，并校验形态串里的函数名
-//     等于净化后的绑定名。
+//   - 生产侧（goagent-kernel 的 tooldisclose）：从工具目录派生给模型看的
+//     调用形态，形态里的函数名必须是**净化后**的名字——因为程序里真正挂上去的
+//     就是净化后的那个（kernel 的 ptc 把绑定挂在 host.<净化名> 上）。
+//   - 消费侧（goagent-kernel 的 ptc）：把绑定挂到 host 对象上，并校验形态串里的
+//     函数名等于净化后的绑定名。
 //
 // 两侧必须**逐字一致**，否则就是「生产侧派得出、消费侧认不出」的夹缝：
 // 生产侧返回 `get-logs(h)`，消费侧要的是 `get_logs(h)`，于是形态在装配期
@@ -41,7 +45,7 @@
 // # 撞名是调用方的事，本包不拦
 //
 // `get-logs` 与 `get_logs` 规整后同名。拦不拦、报什么错，取决于调用方
-// 的语义（ptc 把它当装配期错误拒掉，因为顶替意味着副作用错位）。
+// 的语义（kernel 的 ptc 把它当装配期错误拒掉，因为顶替意味着副作用错位）。
 // 本包只提供规则，不做集合级别的判定。
 package toolname
 
@@ -76,7 +80,7 @@ func IsJSIdent(s string) bool {
 // 远不如「这个名字非法」直观。
 //
 // 规整不保证唯一：`get-logs` 与 `get_logs` 都得到 `get_logs`。
-// 是否允许由调用方决定（ptc 选择在装配期拒，因为顶替意味着副作用错位）。
+// 是否允许由调用方决定（kernel 的 ptc 选择在装配期拒，因为顶替意味着副作用错位）。
 func Normalize(name string) string {
 	var b []rune
 	started := false
