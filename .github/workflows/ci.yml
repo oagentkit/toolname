@@ -6,6 +6,10 @@ name: CI
 on:
   push:
     branches: [main]
+    # tag 事件也要跑：共享 workflow 是 workflow_call（加不了触发器），
+    # 触发器只能加在各仓薄调用层——与矩阵其余 13 个模块仓同款。
+    # 打 tag 时会多跑一档 matrix-registration：打 tag 的仓必须在矩阵登记面内。
+    tags: ['v*']
   pull_request:
     branches: [main]
   workflow_dispatch:
